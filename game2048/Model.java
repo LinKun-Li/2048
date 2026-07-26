@@ -129,39 +129,48 @@ public class Model extends Observable {
         if (changed) {
             setChanged();
         }
+        b.setViewingPerspective(Side.NORTH);
         return changed;
     }
 
     public boolean helper(int col){
-        int size = board.size(), target = size - 1;
-        boolean changed = false, merged = false;
+        int size  = board.size();
+        int target = size -1;
+        boolean change = false;
+        boolean merge  = false;
 
-        for (int row = size - 1; row >= 0; row--) {
+        for(int row=size-1;row>=0;row--) {
             Tile t = board.tile(col, row);
-            if (t == null) continue;
+            if (t == null) {continue;}
 
-            // 尝试和 target+1 合并
+
             if (target < size - 1) {
                 Tile above = board.tile(col, target + 1);
-                if (!merged && above.value() == t.value()) {
-                    board.move(col, target + 1, t);
-                    score += above.value() * 2;
-                    changed = true;
-                    merged = true;
-                    continue;   // target 不动，合并后的 tile 占着 target+1
+                if (!merge && t.value() == above.value()) {
+                    this.score += t.value() * 2;
+                    board.move(col,target+1,t);
+                    merge = true;
+                    change = true;
+                    continue;
                 }
+
+
+
+                board.move(col, target, t);
+                target--;
+                change = true;
+                merge = false;
+                continue;
             }
 
+
             board.move(col, target, t);
-            if (target != row) changed = true;
+            if(target !=row){change = true;}
             target--;
-            merged = false;
+
+
         }
-        return changed;
-
-
-
-
+        return change;
     }
 
 
